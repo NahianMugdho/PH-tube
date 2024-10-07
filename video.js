@@ -13,9 +13,9 @@ loadcategories()
 
 
 
-const loadvideos = ()=>{
+const loadvideos = (searchtext= "")=>{
     //fetch data
-    fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchtext}`)
     // .then((res)=>console.log(res))
     .then((res)=>res.json())
     .then((data)=>displayVid(data.videos))
@@ -50,7 +50,7 @@ const displayCat =(cats) =>{
         // Create a Button
         const buttonCont = document.createElement("div");
         buttonCont.innerHTML = `
-        <button onclick= "loadCatVideos(${item.category_id})" class ='btn'>
+        <button id ="btn-${item.category_id}" onclick= "loadCatVideos(${item.category_id})" class ='btn category-btn'>
             ${item.category}
         </button>
         
@@ -111,7 +111,7 @@ const displayVid =(videos) =>{
 
  </div>
 
- <p>        <p>
+ <p> <button class= "btn"> Details  </button>      <p>
  </div>
 
 
@@ -136,11 +136,32 @@ function getTime(time){
 const loadCatVideos = (id)=>{
     // alert(id)
     fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    
 // .then((res)=>console.log(res))
     .then((res)=>res.json())
-    .then((data) => displayVid(data.category))
-    .catch((error)=>console.log(error))
+    .then((data) => {
+        removeclass();
+        const activatebtn = document.getElementById(`btn-${id}`);
+        activatebtn.classList.add("active");    
+        displayVid(data.category);
+    });
+    // .catch((error)=> console.log(error));
 
+};
+
+const removeclass = () =>{
+
+    const buttons = document.getElementsByClassName("category-btn");
+    for(let btn of buttons){
+
+       btn.classList.remove("active") 
+    }
 
 
 }
+
+// search function
+document.getElementById("search-ip").addEventListener("keyup",(e)=>{
+    loadvideos(e.target.value);
+
+});
